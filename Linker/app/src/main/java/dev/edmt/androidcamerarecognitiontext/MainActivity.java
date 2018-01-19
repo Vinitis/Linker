@@ -18,6 +18,8 @@ import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -105,19 +107,28 @@ public class MainActivity extends AppCompatActivity {
                 public void receiveDetections(Detector.Detections<TextBlock> detections) {
 
                     final SparseArray<TextBlock> items = detections.getDetectedItems();
+                    final StringBuilder condition = new StringBuilder("(http|ftp|https)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?");
                     if(items.size() != 0)
                     {
                         textView.post(new Runnable() {
                             @Override
                             public void run() {
-                                StringBuilder stringBuilder = new StringBuilder();
+                                StringBuilder stringBuilder = new StringBuilder("");
+                                StringBuffer finallText = new StringBuffer("");
+
                                 for(int i =0;i<items.size();++i)
                                 {
                                     TextBlock item = items.valueAt(i);
                                     stringBuilder.append(item.getValue());
                                     stringBuilder.append("\n");
                                 }
-                                textView.setText(stringBuilder.toString());
+
+                                Pattern p = Pattern.compile(condition.toString());
+                                Matcher m = p.matcher(stringBuilder.toString());
+                                while(m.find()){
+                                    finallText.append(m.group().toString()+"\n");
+                                }
+                                textView.setText(finallText.toString());
                             }
                         });
                     }
