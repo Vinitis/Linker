@@ -18,6 +18,7 @@ import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     TextView textView;
     CameraSource cameraSource;
     final int RequestCameraPermissionID = 1001;
+    final LinkSelecter linkSelecter = new LinkSelecter(40,5,4);
 
 
     @Override
@@ -65,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             cameraSource = new CameraSource.Builder(getApplicationContext(), textRecognizer)
                     .setFacing(CameraSource.CAMERA_FACING_BACK)
                     .setRequestedPreviewSize(1280, 1024)
-                    .setRequestedFps(2.0f)
+                    .setRequestedFps(30.0f)
                     .setAutoFocusEnabled(true)
                     .build();
             cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
@@ -106,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void receiveDetections(Detector.Detections<TextBlock> detections) {
 
-                    final SparseArray<TextBlock> items = detections.getDetectedItems();
+                    /*final SparseArray<TextBlock> items = detections.getDetectedItems();
                     final StringBuilder condition = new StringBuilder("(http|ftp|https)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?");
                     if(items.size() != 0)
                     {
@@ -127,6 +129,38 @@ public class MainActivity extends AppCompatActivity {
                                 Matcher m = p.matcher(stringBuilder.toString());
                                 while(m.find()){
                                     finallText.append(m.group().toString()+"\n");
+                                }
+                                textView.setText(finallText.toString());
+                            }
+                        });
+                    }*/
+                    final SparseArray<TextBlock> items = detections.getDetectedItems();
+                    //final StringBuilder condition = new StringBuilder("(http|ftp|https)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?");
+                    final StringBuilder condition = new StringBuilder("(http:\\/\\/|https:\\/\\/|www)\\S*");
+                    if(items.size() != 0)
+                    {
+                        textView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                StringBuilder stringBuilder = new StringBuilder("");
+                                StringBuffer finallText = new StringBuffer("");
+
+                                for(int i =0;i<items.size();++i)
+                                {
+                                    TextBlock item = items.valueAt(i);
+                                    stringBuilder.append(item.getValue());
+                                    stringBuilder.append("\n");
+                                }
+
+                                Pattern p = Pattern.compile(condition.toString());
+                                Matcher m = p.matcher(stringBuilder.toString());
+                                while(m.find()){
+                                    linkSelecter.addLink(m.group());
+                                }
+                                ArrayList<String> finallLinks = new ArrayList<String>(linkSelecter.getCorrectLinks());
+                                for(int i=0;i<finallLinks.size();i++){
+                                    finallText.append(finallLinks.get(i));
+                                    finallText.append("\n");
                                 }
                                 textView.setText(finallText.toString());
                             }

@@ -5,7 +5,10 @@
       <module fileurl="file://$PROJECT_DIR$/AndroidCameraRecognitionText.iml" filepath="$PROJECT_DIR$/AndroidCameraRecognitionText.iml" />
       <module fileurl="file://$PROJECT_DIR$/Linker.iml" filepath="$PROJECT_DIR$/Linker.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+<<<<<<< Updated upstream
       <module fileurl="file://C:/Users/atoja/AndroidStudioProjects/Linker/Linker/app/app.iml" filepath="C:/Users/atoja/AndroidStudioProjects/Linker/Linker/app/app.iml" />
+=======
+>>>>>>> Stashed changes
     </modules>
   </component>
 </project>
